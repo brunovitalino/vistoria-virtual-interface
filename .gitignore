@@ -3,11 +3,15 @@
 # Compiled output
 /dist
 /tmp
+tmp/
+app/**/*.js
+app/**/*.js.map
 /out-tsc
 /bazel-out
 
 # Node
 /node_modules
+bower_components/
 npm-debug.log
 yarn-error.log
 
@@ -34,9 +38,14 @@ yarn-error.log
 /connect.lock
 /coverage
 /libpeerconnection.log
+npm-debug.log
 testem.log
 /typings
 __screenshots__/
+
+# e2e
+e2e/*.js
+e2e/*.map
 
 # System files
 .DS_Store
