@@ -1,0 +1,22 @@
+.layout-container {
+  height: 100vh;
+}
+
+.menu-title {
+  padding: 16px;
+  font-weight: 600;
+}
+
+.toolbar-title {
+  margin-left: 12px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.flex-spacer {
+  flex: 1 1 auto;
+}
+
+.page-content {
+  padding: 24px;
+}
