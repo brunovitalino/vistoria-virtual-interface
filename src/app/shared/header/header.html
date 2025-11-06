@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="toggleSidenav.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="toolbar-title">Painel Administrativo</span>
+
+  <span class="flex-spacer"></span>
+
+  <button mat-icon-button (click)="toggleTheme()">
+    <mat-icon>dark_mode</mat-icon>
+  </button>
+
+  <button mat-button>
+    <mat-icon>logout</mat-icon> Logout
+  </button>
+</mat-toolbar>

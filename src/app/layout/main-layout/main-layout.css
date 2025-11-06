@@ -1,22 +1,24 @@
-.layout-container {
+/* O componente root do layout ocupa a altura toda da tela */
+:host {
+  display: block;
   height: 100vh;
 }
 
-.menu-title {
-  padding: 16px;
-  font-weight: 600;
+/* O sidenav-container precisa ocupar 100% do host */
+.layout-container {
+  height: 100%;
 }
 
-.toolbar-title {
-  margin-left: 12px;
-  font-size: 18px;
-  font-weight: 500;
+/* O conteúdo interno deve ser um flex vertical */
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.flex-spacer {
-  flex: 1 1 auto;
-}
-
+/* A área principal cresce para empurrar o footer para baixo */
 .page-content {
+  flex: 1;
   padding: 24px;
+  box-sizing: border-box;
 }
