@@ -1,2 +1,2 @@
 export type ImovelCategoria =
-  'CASA' | 'APARTAMENTO' | 'LOTE' | 'DESCONHECIDO';
+  'CASA' | 'APARTAMENTO' | 'LOTE' | 'LOFT' | 'DESCONHECIDO';

@@ -45,6 +45,7 @@ export class ImovelPdfService {
     const txt = lines.join(' ').toUpperCase();
 
     if (txt.includes('APARTAMENTO')) return 'APARTAMENTO';
+    if (txt.includes('LOFT')) return 'LOFT';
     if (txt.includes('CASA')) return 'CASA';
     if (txt.includes('LOTE') || txt.includes('TERRENO')) return 'LOTE';
 
@@ -208,10 +209,39 @@ export class ImovelPdfService {
     };
   }
 
-  buildImovelCasa(lines: string[]): any {
+  buildImovelLoft(lines: string[]): any {
     lines = this.getArrayJuntandoValoresDeEndereco(lines);
     
     const saida = lines.map((l, i) => `${i} ${l}`).join('\n');
+    console.log(saida);
+
+    return {
+      categoria: 'Loft',
+      uf: lines[70],
+      municipio: lines[15],
+      distrito: lines[43],
+      bairro: lines[49],
+      endereco: lines[63],
+      cep: lines[31],
+      latitude: {
+        hemisferio: lines[17],
+        graus:      lines[48],
+        min:        lines[42],
+        seg:        lines[14]
+      },
+      longitude: {
+        graus: lines[44],
+        min:   lines[46],
+        seg:   lines[47],
+        datum: lines[69]
+      },
+    };
+  }
+
+  buildImovelCasa(lines: string[]): any {
+    lines = this.getArrayJuntandoValoresDeEndereco(lines);
+    
+    // const saida = lines.map((l, i) => `${i} ${l}`).join('\n');
     // console.log(saida);
 
     let algo = {
@@ -235,8 +265,6 @@ export class ImovelPdfService {
         datum: lines[63]
       },
     };
-
-    console.log(algo);
 
     return algo;
   }
@@ -273,6 +301,7 @@ export class ImovelPdfService {
     let imovel: any = {};
 
     if (categoria === 'APARTAMENTO') imovel = this.buildImovelApartamento(lines);
+    else if (categoria === 'LOFT') imovel = this.buildImovelLoft(lines);
     else if (categoria === 'CASA') imovel = this.buildImovelCasa(lines);
     else if (categoria === 'LOTE') imovel = this.buildImovelTerreno(lines);
 
