@@ -1,0 +1,108 @@
+<div class="import-container">
+
+  <h1>Importar Documento de Vistoria</h1>
+
+  <!-- Área de arrastar PDF -->
+  <div
+    class="dropzone"
+    (drop)="onDrop($event)"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    [class.dragging]="dragOver"
+  >
+    <p>Arraste o PDF aqui</p>
+    <button mat-raised-button color="primary" (click)="fileInput.click()">
+      Selecionar PDF
+    </button>
+
+    <input 
+      #fileInput
+      type="file"
+      accept="application/pdf"
+      (change)="onFileSelected($event)"
+      hidden
+    />
+  </div>
+
+  <!-- Preview -->
+  <div *ngIf="fileUploaded" class="file-preview">
+    <mat-card>
+      <mat-card-title>{{ fileUploaded.name }}</mat-card-title>
+      <button mat-button color="accent" (click)="extrairDadosDoPdf()">Extrair dados</button>
+    </mat-card>
+  </div>
+
+  <!-- Formulário de edição -->
+  <form [formGroup]="imovelFormGroup" *ngIf="imovelFormGroup" class="imovelForm" (ngSubmit)="salvar()">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Categoria</mat-label>
+      <input matInput formControlName="categoria">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>UF</mat-label>
+      <input matInput formControlName="uf">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Município</mat-label>
+      <input matInput formControlName="municipio">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Distrito</mat-label>
+      <input matInput formControlName="distrito">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Bairro</mat-label>
+      <input matInput formControlName="bairro">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Endereço</mat-label>
+      <input matInput formControlName="endereco">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cep</mat-label>
+      <input matInput formControlName="cep">
+    </mat-form-field>
+
+    <!-- Só mostra se for Casa/Apto -->
+    <mat-form-field *ngIf="isCasaOuApto()" appearance="outline">
+      <mat-label>Área construída (m²)</mat-label>
+      <input matInput formControlName="areaConstruida">
+    </mat-form-field>
+
+    <!-- Campos específicos do terreno -->
+    <ng-container *ngIf="imovelFormGroup.get('categoria')?.value == 'Lote'">
+      <mat-form-field appearance="outline">
+        <mat-label>Área do Terreno (m²)</mat-label>
+        <input matInput formControlName="areaTerreno">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Testada (m)</mat-label>
+        <input matInput formControlName="testada">
+      </mat-form-field>
+    </ng-container>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Data da Vistoria</mat-label>
+      <input matInput formControlName="dataVistoria">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Observações</mat-label>
+      <textarea matInput formControlName="observacoes"></textarea>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" [disabled]="saving">
+      {{ saving ? 'Salvando...' : 'Salvar dados' }}
+    </button>
+
+  </form>
+
+</div>

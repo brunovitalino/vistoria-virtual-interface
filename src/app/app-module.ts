@@ -1,9 +1,9 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { DashboardModule } from './pages/dashboard/dashboard-module';
 import { MainLayoutModule } from './layout/main-layout/main-layout-module';
 
 @NgModule({
@@ -13,11 +13,11 @@ import { MainLayoutModule } from './layout/main-layout/main-layout-module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    MainLayoutModule,
-    DashboardModule
+    MainLayoutModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
+    provideHttpClient()
   ],
   bootstrap: [App]
 })

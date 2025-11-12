@@ -1,0 +1,28 @@
+.import-container {
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+.dropzone {
+  border: 2px dashed #666;
+  padding: 30px;
+  text-align: center;
+  border-radius: 8px;
+  background: #fafafa;
+  cursor: pointer;
+}
+
+.file-preview {
+  margin-top: 20px;
+}
+
+.imovelForm mat-form-field {
+  display: block;
+  margin-top: 20px;
+}
+
+.textaox {
+  height: 300px;
+  width: 100%;
+  text-align: center;
+}
