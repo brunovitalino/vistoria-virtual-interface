@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ImovelApiService } from './services/imovel-api.service';
 import { ImovelPdfService } from './services/imovel-pdf.service';
 import { Imovel } from './models/imovel';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-imovel',
@@ -20,11 +21,25 @@ export class ImovelComponent {
   saving = false;
   dragOver = false;
 
+  gridColsNumber = 2; // padrão para desktop
+
   constructor(
     private formBuilder: FormBuilder,
     private imovelPdfService: ImovelPdfService,
-    private imovelApiService: ImovelApiService
+    private imovelApiService: ImovelApiService,
+    private breakpointObserver: BreakpointObserver
   ) {}
+
+  ngOnInit() {
+    this.apliqueResponsividadeNoFormularioDeImovel();
+  }
+
+  private apliqueResponsividadeNoFormularioDeImovel(): void { // Quando for tela pequena (celular), muda para 1 coluna
+    this.breakpointObserver.observe([Breakpoints.Handset])
+      .subscribe(result => {
+        this.gridColsNumber = result.matches ? 1 : 2;
+      });
+  }
 
   // DRAG & DROP, para upload moderno
   onDragOver(ev: DragEvent): void {
@@ -88,6 +103,9 @@ export class ImovelComponent {
       areaTerreno: [imovel.areaTerreno],
       testada: [imovel.testada],
 
+      vistoria: [imovel.vistoria],
+      usoDaUnidade: [imovel.usoDaUnidade],
+      ocupacao: [imovel.ocupacao],
       dataVistoria: [imovel.dataVistoria],
       observacoes: [imovel.observacoes],
 

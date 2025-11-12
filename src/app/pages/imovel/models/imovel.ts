@@ -13,6 +13,9 @@ export interface Imovel {
   areaTerreno?: string | null;
   testada?: string | null;
 
+  vistoria?: string | null;
+  usoDaUnidade?: string | null;
+  ocupacao?: string | null;
   dataVistoria?: string | null;
   observacoes?: string | null;
 

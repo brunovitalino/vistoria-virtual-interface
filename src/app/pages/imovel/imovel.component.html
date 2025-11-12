@@ -35,73 +35,104 @@
   <!-- Formulário de edição -->
   <form [formGroup]="imovelFormGroup" *ngIf="imovelFormGroup" class="imovelForm" (ngSubmit)="salvar()">
 
-    <mat-form-field appearance="outline">
-      <mat-label>Categoria</mat-label>
-      <input matInput formControlName="categoria">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>UF</mat-label>
-      <input matInput formControlName="uf">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Município</mat-label>
-      <input matInput formControlName="municipio">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Distrito</mat-label>
-      <input matInput formControlName="distrito">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Bairro</mat-label>
-      <input matInput formControlName="bairro">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Endereço</mat-label>
-      <input matInput formControlName="endereco">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Cep</mat-label>
-      <input matInput formControlName="cep">
-    </mat-form-field>
-
-    <!-- Só mostra se for Casa/Apto -->
-    <mat-form-field *ngIf="isCasaOuApto()" appearance="outline">
-      <mat-label>Área construída (m²)</mat-label>
-      <input matInput formControlName="areaConstruida">
-    </mat-form-field>
-
-    <!-- Campos específicos do terreno -->
-    <ng-container *ngIf="imovelFormGroup.get('categoria')?.value == 'Lote'">
-      <mat-form-field appearance="outline">
-        <mat-label>Área do Terreno (m²)</mat-label>
-        <input matInput formControlName="areaTerreno">
+    <div class="row">
+      <mat-form-field appearance="outline" class="col-2">
+        <mat-label>Categoria</mat-label>
+        <input matInput formControlName="categoria">
       </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Testada (m)</mat-label>
-        <input matInput formControlName="testada">
+    
+      <mat-form-field appearance="outline" class="col-1">
+        <mat-label>UF</mat-label>
+        <input matInput formControlName="uf">
       </mat-form-field>
-    </ng-container>
+  
+      <mat-form-field appearance="outline" class="col-2">
+        <mat-label>Município</mat-label>
+        <input matInput formControlName="municipio">
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Data da Vistoria</mat-label>
-      <input matInput formControlName="dataVistoria">
-    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col-2">
+        <mat-label>Distrito</mat-label>
+        <input matInput formControlName="distrito">
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="col-2">
+        <mat-label>Bairro</mat-label>
+        <input matInput formControlName="bairro">
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="col-1">
+        <mat-label>Cep</mat-label>
+        <input matInput formControlName="cep">
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Observações</mat-label>
-      <textarea matInput formControlName="observacoes"></textarea>
-    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col-4">
+        <mat-label>Endereço</mat-label>
+        <input matInput formControlName="endereco">
+      </mat-form-field>
+    </div>
+    
+    <!-- <fieldset class="form-section" *ngIf="isCasaOuApto()"> -->
+    <fieldset class="form-section" *ngIf="false">
+      <legend>Áreas de Construção Totais(m²)</legend>
+      <div class="row">
+        <mat-form-field appearance="outline" class="col-1">
+          <mat-label>Área (m²)</mat-label>
+          <input matInput formControlName="areaConstruida">
+        </mat-form-field>
+      </div>
+    </fieldset>
 
-    <button mat-raised-button color="primary" [disabled]="saving">
-      {{ saving ? 'Salvando...' : 'Salvar dados' }}
-    </button>
+    <div class="row">
+      <!-- Campos específicos do terreno -->
+      <ng-container *ngIf="imovelFormGroup.get('categoria')?.value == 'Lote'">
+        <mat-form-field appearance="outline">
+          <mat-label>Área do Terreno (m²)</mat-label>
+          <input matInput formControlName="areaTerreno">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Testada (m)</mat-label>
+          <input matInput formControlName="testada">
+        </mat-form-field>
+      </ng-container>
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col-1">
+        <mat-label>Vistoria</mat-label>
+        <input matInput formControlName="vistoria">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-1">
+        <mat-label>Uso da Unidade</mat-label>
+        <input matInput formControlName="usoDaUnidade">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-1">
+        <mat-label>Ocupação</mat-label>
+        <input matInput formControlName="ocupacao">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-1">
+        <mat-label>Data da Vistoria</mat-label>
+        <input matInput formControlName="dataVistoria">
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col-4">
+        <mat-label>Observações</mat-label>
+        <textarea matInput formControlName="observacoes"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" [disabled]="saving">
+        {{ saving ? 'Salvando...' : 'Salvar dados' }}
+      </button>
+    </div>
 
   </form>
 

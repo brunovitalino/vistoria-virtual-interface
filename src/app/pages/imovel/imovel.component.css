@@ -17,12 +17,60 @@
 }
 
 .imovelForm mat-form-field {
-  display: block;
+  /* display: block; */
   margin-top: 20px;
 }
 
-.textaox {
-  height: 300px;
-  width: 100%;
-  text-align: center;
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.col-1 {
+  flex: 1;
+  min-width: 200px;
+}
+
+.col-2 {
+  flex: 2;
+  min-width: 200px;
+}
+
+.col-3 {
+  flex: 3;
+  min-width: 200px;
+}
+
+.col-4 {
+  flex: 4;
+  min-width: 200px;
+}
+
+.form-section {
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.form-section legend {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.6);
+  margin-left: 8px;
+  padding: 0 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* alinhado à direita */
+  gap: 12px;
+  margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+  .row {
+    flex-direction: column;
+  }
 }

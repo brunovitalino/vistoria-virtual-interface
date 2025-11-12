@@ -14,6 +14,7 @@ import { ImovelComponent } from './imovel.component';
 import { ImovelRoutingModule } from './imovel-routing.module';
 import { ImovelApiService } from './services/imovel-api.service';
 import { ImovelPdfService } from './services/imovel-pdf.service';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { ImovelPdfService } from './services/imovel-pdf.service';
     MatIconModule,
     MatCardModule,
     MatFormFieldModule,
+    MatGridListModule,
     MatInputModule,
     MatSelectModule,
     MatProgressBarModule,
