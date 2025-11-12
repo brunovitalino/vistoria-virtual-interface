@@ -87,9 +87,9 @@
       </div>
     </fieldset>
 
-    <div class="row">
+    <div class="row" *ngIf="false">
       <!-- Campos específicos do terreno -->
-      <ng-container *ngIf="imovelFormGroup.get('categoria')?.value == 'Lote'">
+      <ng-container *ngIf="imovelFormGroup?.get('categoria')?.value == 'Lote'">
         <mat-form-field appearance="outline">
           <mat-label>Área do Terreno (m²)</mat-label>
           <input matInput formControlName="areaTerreno">
@@ -102,24 +102,27 @@
       </ng-container>
     </div>
 
-    <div class="row">
-      <mat-form-field appearance="outline" class="col-1">
-        <mat-label>Vistoria</mat-label>
-        <input matInput formControlName="vistoria">
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col-1">
-        <mat-label>Uso da Unidade</mat-label>
-        <input matInput formControlName="usoDaUnidade">
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col-1">
-        <mat-label>Ocupação</mat-label>
-        <input matInput formControlName="ocupacao">
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col-1">
-        <mat-label>Data da Vistoria</mat-label>
-        <input matInput formControlName="dataVistoria">
-      </mat-form-field>
-    </div>
+    <fieldset class="form-section">
+      <legend>Caracterização do Imóvel</legend>
+      <div class="row">
+        <mat-form-field appearance="outline" class="col-2">
+          <mat-label>Vistoria</mat-label>
+          <input matInput formControlName="vistoria">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-2" *ngIf="imovelFormGroup.get('categoria')?.value != 'Lote'">
+          <mat-label>Uso da Unidade</mat-label>
+          <input matInput formControlName="usoDaUnidade">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-1" *ngIf="imovelFormGroup.get('categoria')?.value != 'Lote'">
+          <mat-label>Ocupação</mat-label>
+          <input matInput formControlName="ocupacao">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-1">
+          <mat-label>Data da Vistoria</mat-label>
+          <input matInput formControlName="dataVistoria">
+        </mat-form-field>
+      </div>
+    </fieldset>
 
     <div class="row">
       <mat-form-field appearance="outline" class="col-4">

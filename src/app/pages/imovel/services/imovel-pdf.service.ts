@@ -62,12 +62,51 @@ export class ImovelPdfService {
     return /^[A-ZÇÃÕ ]{3,}$/.test(s.trim());
   }
 
+  getArrayComoTexto(lines: string[]): string {
+    return lines.map((l, i) => `${i} ${l}`).join('\n');
+  }
+
+  getArrayJuntandoUmGrupoDeElementos(lines: string[], indexInicialDaQuebra: number, indexFinalDaQuebra: number): string[] {
+    const anteriores = lines.slice(0, indexInicialDaQuebra + 1);
+    const meio = lines.slice(indexInicialDaQuebra + 1, indexFinalDaQuebra).join(' ');
+    const posteriores = lines.slice(indexFinalDaQuebra); 
+    return [
+      ...anteriores,
+      meio,
+      ...posteriores
+    ];
+  }
+
+  getArrayJuntandoValoresDeEndereco(lines: string[]) {
+    const hemisferioIndex = lines.indexOf('Hemisfério');
+    const datumIndex = lines.indexOf('Datum', hemisferioIndex);
+    return this.getArrayJuntandoUmGrupoDeElementos(lines, hemisferioIndex, datumIndex);
+  }
+  
+  getArrayJuntandoValoresDeVistoriaParaApartamento(lines: string[]) {
+    const finalidadeIndex = lines.indexOf('Datum') + 7;
+    const vistoriaIndex = lines.indexOf('Vistoria', finalidadeIndex);
+    return this.getArrayJuntandoUmGrupoDeElementos(lines, finalidadeIndex, vistoriaIndex);
+  }
+  getArrayJuntandoValoresDeVistoriaParaLoft(lines: string[]) {
+    const padraoDoEmpreendimentoIndex = lines.indexOf('Serviços Públicos e Comunitários') + 5;
+    const estadoDeConservaçãoIndex = lines.indexOf('Vistoria', padraoDoEmpreendimentoIndex);
+    return this.getArrayJuntandoUmGrupoDeElementos(lines, padraoDoEmpreendimentoIndex, estadoDeConservaçãoIndex);
+  }
+  getArrayJuntandoValoresDeVistoriaParaCasa(lines: string[]) {
+    const finalidadeIndex = lines.indexOf('Finalidade');
+    const vistoriaIndex = lines.indexOf('Vistoria', finalidadeIndex);
+    return this.getArrayJuntandoUmGrupoDeElementos(lines, finalidadeIndex, vistoriaIndex);
+  }
+  getArrayJuntandoValoresDeVistoriaParaLote(lines: string[]) {
+    const padraoDoEmpreendimentoIndex = lines.indexOf('Padrão do Empreendimento');
+    const estadoDeConservaçãoIndex = lines.indexOf('Estado de Conservação', padraoDoEmpreendimentoIndex) - 3;
+    return this.getArrayJuntandoUmGrupoDeElementos(lines, padraoDoEmpreendimentoIndex, estadoDeConservaçãoIndex);
+  }
+
   buildImovelApartamento(lines: string[]): any {
     lines = this.getArrayJuntandoValoresDeEndereco(lines);
-    
-    // const saida = lines.map((l, i) => `${i} ${l}`).join('\n');
-    // console.log(saida);
-
+    lines = this.getArrayJuntandoValoresDeVistoriaParaApartamento(lines);
     return {
       categoria: 'Apartamento',
       uf: lines[70],
@@ -87,27 +126,17 @@ export class ImovelPdfService {
         min:   lines[46],
         seg:   lines[47],
         datum: lines[69]
-      }
+      },
+      vistoria: lines[71],
+      usoDaUnidade: lines[80],
+      ocupacao: lines[81],
+      dataVistoria: lines[79]
     };
-  }
-  getArrayJuntandoValoresDeEndereco(lines: string[]) {
-    const hemisferioIndex = lines.indexOf('Hemisfério');
-    const datumIndex = lines.indexOf('Datum', hemisferioIndex);
-    return this.getArrayJuntandoUmGrupoDeElementos(lines, hemisferioIndex, datumIndex);
-  }
-  getArrayJuntandoUmGrupoDeElementos(lines: string[], indexInicialDaQuebra: number, indexFinalDaQuebra: number): string[] {
-    const anteriores = lines.slice(0, indexInicialDaQuebra + 1);
-    const meio = lines.slice(indexInicialDaQuebra + 1, indexFinalDaQuebra).join(' ');
-    const posteriores = lines.slice(indexFinalDaQuebra); 
-    return [
-      ...anteriores,
-      meio,
-      ...posteriores
-    ];
   }
 
   buildImovelLoft(lines: string[]): any {
     lines = this.getArrayJuntandoValoresDeEndereco(lines);
+    lines = this.getArrayJuntandoValoresDeVistoriaParaLoft(lines);
     return {
       categoria: 'Loft',
       uf: lines[70],
@@ -127,12 +156,17 @@ export class ImovelPdfService {
         min:   lines[46],
         seg:   lines[47],
         datum: lines[69]
-      }
+      },
+      vistoria: lines[71],
+      usoDaUnidade: lines[79],
+      ocupacao: lines[80],
+      dataVistoria: lines[78]
     };
   }
 
   buildImovelCasa(lines: string[]): any {
     lines = this.getArrayJuntandoValoresDeEndereco(lines);
+    lines = this.getArrayJuntandoValoresDeVistoriaParaCasa(lines);
     return {
       categoria: 'Casa',
       uf: lines[64],
@@ -152,12 +186,17 @@ export class ImovelPdfService {
         min:   lines[44],
         seg:   lines[45],
         datum: lines[63]
-      }
+      },
+      vistoria: lines[71],
+      usoDaUnidade: lines[77],
+      ocupacao: lines[130],
+      dataVistoria: lines[76]
     };
   }
 
-  buildImovelTerreno(lines: string[]): any {
+  buildImovelLote(lines: string[]): any {
     lines = this.getArrayJuntandoValoresDeEndereco(lines);
+    lines = this.getArrayJuntandoValoresDeVistoriaParaLote(lines);
     return {
       categoria: 'Lote',
       uf: lines[70],
@@ -177,7 +216,11 @@ export class ImovelPdfService {
         min:   lines[46],
         seg:   lines[47],
         datum: lines[69]
-      }
+      },
+      vistoria: lines[127],
+      usoDaUnidade: null,
+      ocupacao: null,
+      dataVistoria: lines[128]
     };
   }
 
@@ -187,7 +230,7 @@ export class ImovelPdfService {
     if (categoria === 'APARTAMENTO') imovel = this.buildImovelApartamento(lines);
     else if (categoria === 'LOFT') imovel = this.buildImovelLoft(lines);
     else if (categoria === 'CASA') imovel = this.buildImovelCasa(lines);
-    else if (categoria === 'LOTE') imovel = this.buildImovelTerreno(lines);
+    else if (categoria === 'LOTE') imovel = this.buildImovelLote(lines);
     return imovel;
   }
 
@@ -206,7 +249,10 @@ export class ImovelPdfService {
       areaConstruida: null,
       areaTerreno: null,
       testada: null,
-      dataVistoria: null,
+      vistoria: imovel.vistoria,
+      usoDaUnidade: imovel.usoDaUnidade,
+      ocupacao: imovel.ocupacao,
+      dataVistoria: imovel.dataVistoria,
       observacoes: null,
       origemPreenchimento: 'PDF',
       arquivoNome: fileName,
