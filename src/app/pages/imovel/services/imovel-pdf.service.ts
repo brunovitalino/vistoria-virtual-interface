@@ -52,76 +52,6 @@ export class ImovelPdfService {
     return 'DESCONHECIDO';
   }
 
-  // Helpers de busca
-  findLabelValue(lines: string[], label: string,
-    opts: {
-      maxAhead?: number;
-      maxBack?: number;
-      valueRegex?: RegExp;
-      isCandidate?: (s: string) => boolean;
-      sectionAnchor?: string;
-    } = {}
-  ): string | null {
-
-    const {
-      maxAhead = 80,
-      maxBack = 20,
-      valueRegex,
-      isCandidate,
-      sectionAnchor
-    } = opts;
-
-    // Se quiser restringir à INTRODUÇÃO / IDENTIFICAÇÃO
-    let searchStart = 0;
-    let searchEnd = lines.length - 1;
-
-    if (sectionAnchor) {
-      const idx = lines.findIndex(l => l.toUpperCase().includes(sectionAnchor.toUpperCase()));
-      if (idx !== -1) {
-        searchStart = idx;
-        searchEnd = Math.min(idx + 150, lines.length - 1);
-      }
-    }
-
-    // Localiza o label dentro da janela
-    const labelIndex = lines.findIndex((l, i) =>
-      i >= searchStart &&
-      i <= searchEnd &&
-      l.toUpperCase().includes(label.toUpperCase())
-    );
-
-    if (labelIndex === -1) return null;
-
-    const testCandidate = (line: string) => {
-      if (isCandidate) return isCandidate(line);
-      if (valueRegex) return valueRegex.test(line);
-      return (
-        !/[:]|(Munic|Endere|Categoria|UF|CEP|Bairro|Latitude|Longitude)/i.test(line) &&
-        line.trim().length > 1
-      );
-    };
-
-    // Mesmo linha → tenta extrair após ":"
-    const parts = lines[labelIndex].split(':');
-    if (parts.length > 1) {
-      const after = parts.slice(1).join(':').trim();
-      if (after && testCandidate(after)) return after;
-    }
-
-    // Para frente
-    for (let i = labelIndex + 1; i <= Math.min(lines.length - 1, labelIndex + maxAhead); i++) {
-      const line = lines[i];
-      if (testCandidate(line)) return line;
-    }
-
-    // Para trás
-    for (let i = labelIndex - 1; i >= Math.max(0, labelIndex - maxBack); i--) {
-      const line = lines[i];
-      if (testCandidate(line)) return line;
-    }
-
-    return null;
-  }
   isUF(s: string) {
     return /^[A-Z]{2}$/i.test(s.trim());
   }
@@ -138,20 +68,27 @@ export class ImovelPdfService {
     // const saida = lines.map((l, i) => `${i} ${l}`).join('\n');
     // console.log(saida);
 
-    let retorno = {
+    return {
       categoria: 'Apartamento',
-      uf: this.extrairUf(lines),
-      municipio: this.extrairMunicipio(lines),
-      distrito: this.extrairDistrito(lines),
-      bairro: this.extrairBairro(lines),
-      endereco: this.extrairEndereco(lines),
-      cep: this.extrairCep(lines),
-      latitude: this.extrairLatitude(lines),
-      longitude: this.extrairLongitude(lines)
+      uf: lines[70],
+      municipio: lines[15],
+      distrito: lines[43],
+      bairro: lines[49],
+      endereco: lines[63],
+      cep: lines[31],
+      latitude: {
+        hemisferio: lines[17],
+        graus:      lines[48],
+        min:        lines[42],
+        seg:        lines[14]
+      },
+      longitude: {
+        graus: lines[44],
+        min:   lines[46],
+        seg:   lines[47],
+        datum: lines[69]
+      }
     };
-    // console.log(retorno);
-
-    return retorno;
   }
   getArrayJuntandoValoresDeEndereco(lines: string[]) {
     const hemisferioIndex = lines.indexOf('Hemisfério');
@@ -168,53 +105,9 @@ export class ImovelPdfService {
       ...posteriores
     ];
   }
-  private extrairUf(lines: string[]) {
-    return lines[70];
-  }
-  private extrairMunicipio(lines: string[]) {
-    return lines[15];
-  }
-  private extrairDistrito(lines: string[]) {
-    return lines[43];
-  }
-  private extrairBairro(lines: string[]) {
-    return lines[49];
-  }
-  private extrairEndereco(lines: string[]) {
-    return lines[63];
-  }
-  private extrairCep(lines: string[]) {
-    return lines[31];
-  }
-  private extrairLatitude(lines: string[]) {
-    const idx = lines.findIndex(l => l.toUpperCase().includes('LATITUDE'));
-    if (idx === -1) return {};
-
-    return {
-      hemisferio: lines[17],
-      graus:      lines[48],
-      min:        lines[42],
-      seg:        lines[14]
-    };
-  }
-  private extrairLongitude(lines: string[]) {
-    const idx = lines.findIndex(l => l.toUpperCase().includes('LONGITUDE'));
-    if (idx === -1) return {};
-
-    return {
-      graus: lines[44],
-      min:   lines[46],
-      seg:   lines[47],
-      datum: lines[69]
-    };
-  }
 
   buildImovelLoft(lines: string[]): any {
     lines = this.getArrayJuntandoValoresDeEndereco(lines);
-    
-    const saida = lines.map((l, i) => `${i} ${l}`).join('\n');
-    console.log(saida);
-
     return {
       categoria: 'Loft',
       uf: lines[70],
@@ -234,17 +127,13 @@ export class ImovelPdfService {
         min:   lines[46],
         seg:   lines[47],
         datum: lines[69]
-      },
+      }
     };
   }
 
   buildImovelCasa(lines: string[]): any {
     lines = this.getArrayJuntandoValoresDeEndereco(lines);
-    
-    // const saida = lines.map((l, i) => `${i} ${l}`).join('\n');
-    // console.log(saida);
-
-    let algo = {
+    return {
       categoria: 'Casa',
       uf: lines[64],
       municipio: lines[15],
@@ -263,48 +152,48 @@ export class ImovelPdfService {
         min:   lines[44],
         seg:   lines[45],
         datum: lines[63]
-      },
+      }
     };
-
-    return algo;
   }
 
   buildImovelTerreno(lines: string[]): any {
+    lines = this.getArrayJuntandoValoresDeEndereco(lines);
     return {
       categoria: 'Lote',
-      uf: this.findLabelValue(lines, 'UF'),
-      municipio: this.findLabelValue(lines, 'Município'),
-      distrito: this.findLabelValue(lines, 'Distrito'),
-      bairro: this.findLabelValue(lines, 'Bairro'),
-      endereco: this.findLabelValue(lines, 'Endereço'),
-      cep: this.findLabelValue(lines, 'CEP'),
-
+      uf: lines[70],
+      municipio: lines[15],
+      distrito: lines[43],
+      bairro: lines[49],
+      endereco: lines[63],
+      cep: lines[31],
       latitude: {
-        hemisferio: this.findLabelValue(lines, 'Hemisfério'),
-        graus: this.findLabelValue(lines, 'Graus'),
-        min: this.findLabelValue(lines, 'Min'),
-        seg: this.findLabelValue(lines, 'Seg'),
+        hemisferio: lines[17],
+        graus:      lines[48],
+        min:        lines[42],
+        seg:        lines[14]
       },
-
       longitude: {
-        graus: this.findLabelValue(lines, 'Longitude'),
-        min: this.findLabelValue(lines, 'Min'),
-        seg: this.findLabelValue(lines, 'Seg'),
-      },
+        graus: lines[44],
+        min:   lines[46],
+        seg:   lines[47],
+        datum: lines[69]
+      }
     };
   }
 
-  buildFormDoImovel(text: string, fileName: string): Imovel {
-    const lines = this.getPdfTextoEmArrayNormalizado(text);
+  getImovelPelaCategoria(lines: string[]): any {
     const categoria = this.detectarCategoria(lines);
-
     let imovel: any = {};
-
     if (categoria === 'APARTAMENTO') imovel = this.buildImovelApartamento(lines);
     else if (categoria === 'LOFT') imovel = this.buildImovelLoft(lines);
     else if (categoria === 'CASA') imovel = this.buildImovelCasa(lines);
     else if (categoria === 'LOTE') imovel = this.buildImovelTerreno(lines);
+    return imovel;
+  }
 
+  buildFormDoImovel(text: string, fileName: string): Imovel {
+    const lines = this.getPdfTextoEmArrayNormalizado(text);
+    const imovel = this.getImovelPelaCategoria(lines);
     return {
       categoria: imovel.categoria,
       uf: imovel.uf,
